@@ -26,7 +26,9 @@
  */
 
 'use strict';
-// #Elements
+// # Logical variables
+// answered;
+// # Elements
 let startBtn = document.querySelector('#start');
 let timer = document.querySelector('#time');
 timer.textContent = 90;
@@ -36,7 +38,7 @@ startBtn.addEventListener('click', startTimer);
 
 function startTimer() {
 	// ! Remember to change to 90
-	var timeLeft = 5;
+	var timeLeft = 90;
 
 	var timeInterval = setInterval(function () {
 		if (!timeLeft) {
@@ -48,3 +50,5 @@ function startTimer() {
 		}
 	}, 1000);
 }
+
+// console.log(`answered is not ${!answered}`);

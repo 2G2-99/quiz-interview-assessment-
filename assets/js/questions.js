@@ -40,10 +40,13 @@
  */
 
 'use strict';
+// # Logical variables
+let answered = false;
+
 // # Elements
 let enunciate = document.querySelector('#question-title');
 let choicesList = document.createElement('ol');
-let answers = document.createElement('li');
+const newEl = element => document.createElement(element);
 
 //  Array of questions objects
 let questionsArr = [
@@ -51,16 +54,16 @@ let questionsArr = [
 		question: 'HTML stands for...',
 		answers: {
 			a: 'Higher Textual Markup Language',
-			b: 'Hypo Tiny Mini Limit',
+			b: 'Hypo Tiny Mini Limitation',
 			c: 'Hyper Text Markup Language',
-			d: 'd',
+			d: 'Not sure',
 		},
 		correctAnswer() {
 			return this.answers.c;
 		},
 	},
 	{
-		question: 'To start a form you need to have a ... tag',
+		question: 'To start a form you need a ... tag',
 		answers: {
 			a: 'form',
 			b: 'div',
@@ -127,24 +130,23 @@ function insertQuestion() {
 	let choicesEl = document.querySelector('#choices');
 	choicesEl.appendChild(choicesList);
 	choicesList.classList.add('choices-list');
-	choicesEl.classList.toggle('hide');
-	console.log(choicesEl);
 
-	// Iteration to insert enunciate
-	for (let i = 0; i < questionsArr.length; i++) {
-		const question = questionsArr[i].question;
-		console.log(question);
-
+	// Iteration to insert enunciate and answers
+	let i = 0;
+	const question = questionsArr[i].question;
+	do {
 		enunciate.textContent = question;
-		console.log(enunciate);
-	}
+
+		const answersEntries = Object.entries(questionsArr[i].answers);
+		for (const [key, value] of answersEntries) {
+			let choice = newEl('button');
+			choice.textContent = `${key.toUpperCase()}: ${value}`;
+			choicesList.appendChild(choice);
+		}
+
+		i++;
+	} while ((answered = false));
 }
 
 // #Testing Area
-// console.log(questionsArr[0].correctAnswer());
-// console.log(questionsArr[1].correctAnswer());
-// console.log(questionsArr[2].correctAnswer());
-// console.log(questionsArr[3].correctAnswer());
-// console.log(questionsArr[4].correctAnswer());
-
 insertQuestion();
