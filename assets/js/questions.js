@@ -1,44 +1,3 @@
-/**
- * #Pesudocode
- *  startBtn element
- * 	timer element = 3 minutes
- * 	h2 element for question N
- * 	p element for questionTitleEl of question
- * 	ol element choicesList
- * 	li elements answers children of choicesList
- *	array holding question objects
- * 	* addEventListener for click over startBtn
- * 	function startTimer () {
- * 		timeLeft = 3 minutes
- * 
- *		timeInterval = setInterval (function () {
-		if (!timeLeft) {
-			endGame()
-			request name to hold with final score()
-		} else {
-		timeLeft--
-		}
-	 }, 1000ms)
- * 	}
- *
- * 	* Create a function to clear out the HTML
- * 	function clearPage () {
- * 		document.body.textContent = ''
- * 		
- * 	}
- * 	
- * 	* Create a function to start to append the elements of the question
- * 	function insertQuestion () {
- * 		for (const i of questionsArr) {
-	 		question = questionsArr[i]
-			
-			#questions.textContent = question
- 		}
- * 	}
- * 
- * 	
- */
-
 'use strict';
 //  Array of questions objects
 let questionsArr = [
@@ -76,7 +35,7 @@ let questionsArr = [
 			d: 'Internet',
 		},
 		correctAnswer() {
-			return this.answers.c;
+			return this.answers.b;
 		},
 	},
 	{
@@ -107,16 +66,20 @@ let questionsArr = [
 //----------------------------
 
 // # Logical variables
+// ! Remember to change to 60
+let timeLeft = 60;
 // Variables of the index
 let lastQuestionIndex = questionsArr.length - 1;
 let runningQuestionIndex = 0;
-let answered = true;
+let choice;
+let nodeList;
 
 // # Elements
 let startScreenEl = document.querySelector('#start-screen');
 let questionsContainerEl = document.querySelector('#questions');
 let questionTitleEl = document.querySelector('#question-title');
 let choicesEl = document.querySelector('#choices');
+let feedBackEl = document.querySelector('#feedback');
 
 // function to create new elements
 const newEl = element => document.createElement(element);
@@ -131,8 +94,11 @@ function showQuestion() {
 		startScreenEl.classList.toggle('hide');
 		questionsContainerEl.classList.toggle('hide');
 	}
+
+	return insertQuestion();
 }
 
+// Function to insert current question
 function insertQuestion() {
 	let question = questionsArr[runningQuestionIndex];
 
@@ -144,20 +110,20 @@ function insertQuestion() {
 
 	// Iteration over each value
 	for (const value of answersValue) {
-		let choice = newEl('button');
+		choice = newEl('button');
 
 		choice.textContent = value;
 		choice.classList.add('choice-button');
 		choicesEl.appendChild(choice);
 	}
 
-	checkChoice();
+	return checkChoice();
 }
 
 // Function to check choice
 function checkChoice() {
 	// nodeList of choice buttons
-	const nodeList = document.querySelectorAll('.choice-button');
+	nodeList = document.querySelectorAll('.choice-button');
 	// Iteration over nodeList
 	for (let i = 0; i < nodeList.length; i++) {
 		const node = nodeList[i];
@@ -169,16 +135,44 @@ function checkChoice() {
 			if (
 				myChoice === questionsArr[runningQuestionIndex].correctAnswer()
 			) {
-				console.log(true);
-				runningQuestionIndex++;
-				showQuestion();
+				NewFeedBack('Correct!');
+				deleteChild(choicesEl, choicesEl.lastElementChild);
 			} else {
-				console.log(false);
+				NewFeedBack('Wrong!');
+				timeLeft -= 10;
+				deleteChild(choicesEl, choicesEl.lastElementChild);
+			}
+
+			if (runningQuestionIndex < lastQuestionIndex) {
 				runningQuestionIndex++;
-				showQuestion();
+				return showQuestion();
 			}
 		});
 	}
 }
+
+// Function to delete child elements
+function deleteChild(parent, child) {
+	while (child) {
+		parent.removeChild(child);
+		child = parent.lastElementChild;
+	}
+}
+
+// Function to show feedback
+function NewFeedBack(value) {
+	if (feedBackEl.classList.contains('hide')) {
+		feedBackEl.classList.toggle('hide');
+		feedBackEl.textContent = value;
+	} else {
+		return (feedBackEl.textContent = value);
+	}
+
+	// if (feedBackEl.isEmpty) {
+	// 	feedBackEl.classList.toggle('hide');
+	// 	feedBackEl.textContent = value;
+	// } else {
+	// 	feedBackEl.textContent = '';
+	// }
+}
 // #Testing Area
-insertQuestion();
