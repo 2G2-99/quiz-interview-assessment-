@@ -3,7 +3,7 @@
  *  startBtn element
  * 	timer element = 3 minutes
  * 	h2 element for question N
- * 	p element for enunciate of question
+ * 	p element for questionTitleEl of question
  * 	ol element choicesList
  * 	li elements answers children of choicesList
  *	array holding question objects
@@ -40,14 +40,6 @@
  */
 
 'use strict';
-// # Logical variables
-let answered = false;
-
-// # Elements
-let enunciate = document.querySelector('#question-title');
-let choicesList = document.createElement('ol');
-const newEl = element => document.createElement(element);
-
 //  Array of questions objects
 let questionsArr = [
 	{
@@ -79,8 +71,8 @@ let questionsArr = [
 			'While CSS gives a style, HTML an structure, JavaScript gives ...',
 		answers: {
 			a: 'Potential',
-			b: 'Intuition',
-			c: 'Interactivity',
+			b: 'Interactivity',
+			c: 'Intuition',
 			d: 'Internet',
 		},
 		correctAnswer() {
@@ -112,12 +104,25 @@ let questionsArr = [
 		},
 	},
 ];
+//----------------------------
 
-// Function to hide the start-screen and show the question
-function insertQuestion() {
-	let startScreenEl = document.querySelector('#start-screen');
-	let questionsContainerEl = document.querySelector('#questions');
+// # Logical variables
+// Variables of the index
+let lastQuestionIndex = questionsArr.length - 1;
+let runningQuestionIndex = 0;
+let answered = true;
 
+// # Elements
+let startScreenEl = document.querySelector('#start-screen');
+let questionsContainerEl = document.querySelector('#questions');
+let questionTitleEl = document.querySelector('#question-title');
+let choicesEl = document.querySelector('#choices');
+
+// function to create new elements
+const newEl = element => document.createElement(element);
+
+// Function to make the questions visible
+function showQuestion() {
 	// Conditional to check if start-screen is hidden and question is not
 	if (
 		questionsContainerEl.classList.contains('hide') &&
@@ -126,27 +131,54 @@ function insertQuestion() {
 		startScreenEl.classList.toggle('hide');
 		questionsContainerEl.classList.toggle('hide');
 	}
-
-	let choicesEl = document.querySelector('#choices');
-	choicesEl.appendChild(choicesList);
-	choicesList.classList.add('choices-list');
-
-	// Iteration to insert enunciate and answers
-	let i = 0;
-	const question = questionsArr[i].question;
-	do {
-		enunciate.textContent = question;
-
-		const answersEntries = Object.entries(questionsArr[i].answers);
-		for (const [key, value] of answersEntries) {
-			let choice = newEl('button');
-			choice.textContent = `${key.toUpperCase()}: ${value}`;
-			choicesList.appendChild(choice);
-		}
-
-		i++;
-	} while ((answered = false));
 }
 
+function insertQuestion() {
+	let question = questionsArr[runningQuestionIndex];
+
+	questionTitleEl.textContent = question.question;
+	// Array of values of answers
+	const answersValue = Object.values(
+		questionsArr[runningQuestionIndex].answers
+	);
+
+	// Iteration over each value
+	for (const value of answersValue) {
+		let choice = newEl('button');
+
+		choice.textContent = value;
+		choice.classList.add('choice-button');
+		choicesEl.appendChild(choice);
+	}
+
+	checkChoice();
+}
+
+// Function to check choice
+function checkChoice() {
+	// nodeList of choice buttons
+	const nodeList = document.querySelectorAll('.choice-button');
+	// Iteration over nodeList
+	for (let i = 0; i < nodeList.length; i++) {
+		const node = nodeList[i];
+
+		// Event listener to check if is correct
+		node.addEventListener('click', function (e) {
+			const myChoice = e.target.textContent;
+
+			if (
+				myChoice === questionsArr[runningQuestionIndex].correctAnswer()
+			) {
+				console.log(true);
+				runningQuestionIndex++;
+				showQuestion();
+			} else {
+				console.log(false);
+				runningQuestionIndex++;
+				showQuestion();
+			}
+		});
+	}
+}
 // #Testing Area
 insertQuestion();

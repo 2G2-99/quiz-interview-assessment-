@@ -49,6 +49,9 @@ function startTimer() {
 			timeLeft--;
 		}
 	}, 1000);
+
+	// Invoking insertQuestion
+	showQuestion();
 }
 
 // console.log(`answered is not ${!answered}`);
