@@ -68,6 +68,7 @@ let questionsArr = [
 // # Logical variables
 // ! Remember to change to 60
 let timeLeft = 60;
+
 // Variables of the index
 let lastQuestionIndex = questionsArr.length - 1;
 let runningQuestionIndex = 0;
@@ -75,31 +76,40 @@ let choice;
 let nodeList;
 
 // # Elements
-let startScreenEl = document.querySelector('#start-screen');
-let questionsContainerEl = document.querySelector('#questions');
-let questionTitleEl = document.querySelector('#question-title');
-let choicesEl = document.querySelector('#choices');
-let feedBackEl = document.querySelector('#feedback');
+// Start Screen
+const startScreenEl = document.querySelector('#start-screen');
+
+// Questions
+const questionsContainerEl = document.querySelector('#questions');
+const questionTitleEl = document.querySelector('#question-title');
+const choicesEl = document.querySelector('#choices');
+
+// Feedback
+const feedBackEl = document.querySelector('#feedback');
+
+// End of quiz (End screen)
+const endScreenEl = document.querySelector('#end-screen');
+let finalScoreEl = document.querySelector('#final-score');
 
 // function to create new elements
 const newEl = element => document.createElement(element);
 
 // Function to make the questions visible
-function showQuestion() {
+function showScreen(toShow, toHide) {
 	// Conditional to check if start-screen is hidden and question is not
 	if (
-		questionsContainerEl.classList.contains('hide') &&
-		!startScreenEl.classList.contains('hide')
+		toShow.classList.contains('hide') &&
+		!toHide.classList.contains('hide')
 	) {
-		startScreenEl.classList.toggle('hide');
-		questionsContainerEl.classList.toggle('hide');
+		toShow.classList.toggle('hide');
+		toHide.classList.toggle('hide');
 	}
 
-	return insertQuestion();
+	return renderQuestion();
 }
 
 // Function to insert current question
-function insertQuestion() {
+function renderQuestion() {
 	let question = questionsArr[runningQuestionIndex];
 
 	questionTitleEl.textContent = question.question;
@@ -132,6 +142,7 @@ function checkChoice() {
 		node.addEventListener('click', function (e) {
 			const myChoice = e.target.textContent;
 
+			// Conditional to check choice, then show feedback and delete all elements to render next question (in case the choice is incorrect 10 seconds are to be taken from the time left)
 			if (
 				myChoice === questionsArr[runningQuestionIndex].correctAnswer()
 			) {
@@ -145,7 +156,7 @@ function checkChoice() {
 
 			if (runningQuestionIndex < lastQuestionIndex) {
 				runningQuestionIndex++;
-				return showQuestion();
+				return renderQuestion();
 			}
 		});
 	}
@@ -167,12 +178,10 @@ function NewFeedBack(value) {
 	} else {
 		return (feedBackEl.textContent = value);
 	}
-
-	// if (feedBackEl.isEmpty) {
-	// 	feedBackEl.classList.toggle('hide');
-	// 	feedBackEl.textContent = value;
-	// } else {
-	// 	feedBackEl.textContent = '';
-	// }
 }
-// #Testing Area
+
+//function to end the quiz and render page to input initials
+function endQuiz() {
+	showScreen(endScreenEl, questionsContainerEl);
+	return (finalScoreEl.textContent = timeLeft);
+}
