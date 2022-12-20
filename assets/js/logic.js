@@ -7,19 +7,23 @@ let timer = document.querySelector('#time');
 timer.textContent = 60;
 
 // # Event listener for start button
-startBtn.addEventListener('click', startTimer);
+startBtn.addEventListener('click', runTimer);
 
-function startTimer() {
+function runTimer() {
 	let timeInterval = setInterval(function () {
+		timeLeft--;
+		timer.textContent = timeLeft;
+
 		if (!timeLeft) {
 			clearInterval(timeInterval);
 			timer.textContent = 0;
-		} else {
-			timer.textContent = timeLeft;
-			timeLeft--;
+			return showScreen(endScreenEl, questionsContainerEl);
+		} else if (runningQuestionIndex === lastQuestionIndex) {
+			clearInterval(timeInterval);
+			endQuiz();
 		}
 	}, 1000);
 
-	// Invoking showQuestion
-	showQuestion();
+	// Invoking showScreen
+	showScreen(questionsContainerEl, startScreenEl);
 }
