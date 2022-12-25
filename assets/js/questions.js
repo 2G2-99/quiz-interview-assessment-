@@ -87,10 +87,6 @@ const choicesEl = document.querySelector('#choices');
 // Feedback
 const feedBackEl = document.querySelector('#feedback');
 
-// End of quiz (End screen)
-const endScreenEl = document.querySelector('#end-screen');
-let finalScoreEl = document.querySelector('#final-score');
-
 // function to create new elements
 const newEl = element => document.createElement(element);
 
@@ -180,8 +176,5 @@ function NewFeedBack(value) {
 	}
 }
 
-//function to end the quiz and render page to input initials
-function endQuiz() {
-	showScreen(endScreenEl, questionsContainerEl);
-	return (finalScoreEl.textContent = timeLeft);
-}
+console.log(questionsArr.length);
+console.log(lastQuestionIndex);
