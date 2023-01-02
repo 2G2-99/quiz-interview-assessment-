@@ -176,5 +176,5 @@ function NewFeedBack(value) {
 	}
 }
 
-console.log(questionsArr.length);
-console.log(lastQuestionIndex);
+// console.log(questionsArr.length);
+// console.log(lastQuestionIndex);

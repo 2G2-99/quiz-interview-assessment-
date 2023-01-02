@@ -33,11 +33,11 @@
 
     <div id="end-screen" class="hide">
       <h2>All done!</h2>
-      <p>Your final score is <span id="final-score"></span>.</p>
+      <p>Your final score is <span id="score"></span>.</p>
       <form id="score-form" method="POST">
         <label for="initials">Enter initials:</label>
         <input type="text" id="initials" max="3">
-        <button type="submit">Submit</button>
+        <button type="submit" id="submit-score">Submit</button>
       </form>
     </div>
 
@@ -45,7 +45,6 @@
   </div>
 
   <script src="./assets/js/questions.js"></script>
-  <script src="./assets/js/scores.js"></script>
   <script src="./assets/js/logic.js"></script>
 </body>
 
