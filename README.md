@@ -1,4 +1,4 @@
-# quiz-interviwe-assessment 
+# quiz-interview-assessment 
 
 A practice quiz for an interview coding assessment
 
