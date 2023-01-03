@@ -1,4 +1,4 @@
-# bootcamp-quiz
+# quiz-interviwe-assessment 
 
 A practice quiz for an interview coding assessment
 
