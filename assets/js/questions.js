@@ -1,66 +1,20 @@
-/**
- * #Pesudocode
- *  startBtn element
- * 	timer element = 3 minutes
- * 	h2 element for question N
- * 	p element for enunciate of question
- * 	ol element choicesList
- * 	li elements answers children of choicesList
- *	array holding question objects
- * 	* addEventListener for click over startBtn
- * 	function startTimer () {
- * 		timeLeft = 3 minutes
- * 
- *		timeInterval = setInterval (function () {
-		if (!timeLeft) {
-			endGame()
-			request name to hold with final score()
-		} else {
-		timeLeft--
-		}
-	 }, 1000ms)
- * 	}
- *
- * 	* Create a function to clear out the HTML
- * 	function clearPage () {
- * 		document.body.textContent = ''
- * 		
- * 	}
- * 	
- * 	* Create a function to start to append the elements of the question
- * 	function insertQuestion () {
- * 		for (const i of questionsArr) {
-	 		question = questionsArr[i]
-			
-			#questions.textContent = question
- 		}
- * 	}
- * 
- * 	
- */
-
 'use strict';
-// # Elements
-let enunciate = document.querySelector('#question-title');
-let choicesList = document.createElement('ol');
-let answers = document.createElement('li');
-
 //  Array of questions objects
 let questionsArr = [
 	{
 		question: 'HTML stands for...',
 		answers: {
 			a: 'Higher Textual Markup Language',
-			b: 'Hypo Tiny Mini Limit',
+			b: 'Hypo Tiny Mini Limitation',
 			c: 'Hyper Text Markup Language',
-			d: 'd',
+			d: 'Not sure',
 		},
 		correctAnswer() {
 			return this.answers.c;
 		},
 	},
 	{
-		question: 'To start a form you need to have a ... tag',
+		question: 'To start a form you need a ... tag',
 		answers: {
 			a: 'form',
 			b: 'div',
@@ -76,12 +30,12 @@ let questionsArr = [
 			'While CSS gives a style, HTML an structure, JavaScript gives ...',
 		answers: {
 			a: 'Potential',
-			b: 'Intuition',
-			c: 'Interactivity',
+			b: 'Interactivity',
+			c: 'Intuition',
 			d: 'Internet',
 		},
 		correctAnswer() {
-			return this.answers.c;
+			return this.answers.b;
 		},
 	},
 	{
@@ -109,42 +63,118 @@ let questionsArr = [
 		},
 	},
 ];
+//----------------------------
 
-// Function to hide the start-screen and show the question
-function insertQuestion() {
-	let startScreenEl = document.querySelector('#start-screen');
-	let questionsContainerEl = document.querySelector('#questions');
+// # Logical variables
+// ! Remember to change to 60
+let timeLeft = 60;
 
+// Variables of the index
+let lastQuestionIndex = questionsArr.length - 1;
+let runningQuestionIndex = 0;
+let choice;
+let nodeList;
+
+// # Elements
+// Start Screen
+const startScreenEl = document.querySelector('#start-screen');
+
+// Questions
+const questionsContainerEl = document.querySelector('#questions');
+const questionTitleEl = document.querySelector('#question-title');
+const choicesEl = document.querySelector('#choices');
+
+// Feedback
+const feedBackEl = document.querySelector('#feedback');
+
+// function to create new elements
+const newEl = element => document.createElement(element);
+
+// Function to make the questions visible
+function showScreen(toShow, toHide) {
 	// Conditional to check if start-screen is hidden and question is not
 	if (
-		questionsContainerEl.classList.contains('hide') &&
-		!startScreenEl.classList.contains('hide')
+		toShow.classList.contains('hide') &&
+		!toHide.classList.contains('hide')
 	) {
-		startScreenEl.classList.toggle('hide');
-		questionsContainerEl.classList.toggle('hide');
+		toShow.classList.toggle('hide');
+		toHide.classList.toggle('hide');
 	}
 
-	let choicesEl = document.querySelector('#choices');
-	choicesEl.appendChild(choicesList);
-	choicesList.classList.add('choices-list');
-	choicesEl.classList.toggle('hide');
-	console.log(choicesEl);
+	return renderQuestion();
+}
 
-	// Iteration to insert enunciate
-	for (let i = 0; i < questionsArr.length; i++) {
-		const question = questionsArr[i].question;
-		console.log(question);
+// Function to insert current question
+function renderQuestion() {
+	let question = questionsArr[runningQuestionIndex];
 
-		enunciate.textContent = question;
-		console.log(enunciate);
+	questionTitleEl.textContent = question.question;
+	// Array of values of answers
+	const answersValue = Object.values(
+		questionsArr[runningQuestionIndex].answers
+	);
+
+	// Iteration over each value
+	for (const value of answersValue) {
+		choice = newEl('button');
+
+		choice.textContent = value;
+		choice.classList.add('choice-button');
+		choicesEl.appendChild(choice);
+	}
+
+	return checkChoice();
+}
+
+// Function to check choice
+function checkChoice() {
+	// nodeList of choice buttons
+	nodeList = document.querySelectorAll('.choice-button');
+	// Iteration over nodeList
+	for (let i = 0; i < nodeList.length; i++) {
+		const node = nodeList[i];
+
+		// Event listener to check if is correct
+		node.addEventListener('click', function (e) {
+			const myChoice = e.target.textContent;
+
+			// Conditional to check choice, then show feedback and delete all elements to render next question (in case the choice is incorrect 10 seconds are to be taken from the time left)
+			if (
+				myChoice === questionsArr[runningQuestionIndex].correctAnswer()
+			) {
+				NewFeedBack('Correct!');
+				deleteChild(choicesEl, choicesEl.lastElementChild);
+			} else {
+				NewFeedBack('Wrong!');
+				timeLeft -= 10;
+				deleteChild(choicesEl, choicesEl.lastElementChild);
+			}
+
+			if (runningQuestionIndex < lastQuestionIndex) {
+				runningQuestionIndex++;
+				return renderQuestion();
+			}
+		});
 	}
 }
 
-// #Testing Area
-// console.log(questionsArr[0].correctAnswer());
-// console.log(questionsArr[1].correctAnswer());
-// console.log(questionsArr[2].correctAnswer());
-// console.log(questionsArr[3].correctAnswer());
-// console.log(questionsArr[4].correctAnswer());
+// Function to delete child elements
+function deleteChild(parent, child) {
+	while (child) {
+		parent.removeChild(child);
+		child = parent.lastElementChild;
+	}
+}
 
-insertQuestion();
+// Function to show feedback
+function NewFeedBack(value) {
+	if (feedBackEl.classList.contains('hide')) {
+		feedBackEl.classList.toggle('hide');
+		feedBackEl.textContent = value;
+	} else {
+		return (feedBackEl.textContent = value);
+	}
+}
+
+// console.log(questionsArr.length);
+// console.log(lastQuestionIndex);
