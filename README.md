@@ -14,7 +14,7 @@ No need to install
 
 Please, click on the link below to use the program
 
--   [Quiz interview](https://2g2-99.github.io/bootcamp-quiz/)
+-   [Quiz interview](https://2g2-99.github.io/quiz-interview-assessment-/)
 
 ## License
 
