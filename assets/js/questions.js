@@ -1,8 +1,8 @@
 'use strict';
 //  Array of questions objects
-let questionsArr = [
+let quiz = [
 	{
-		question: 'HTML stands for...',
+		enunciate: 'HTML stands for...',
 		answers: {
 			a: 'Higher Textual Markup Language',
 			b: 'Hypo Tiny Mini Limitation',
@@ -14,7 +14,7 @@ let questionsArr = [
 		},
 	},
 	{
-		question: 'To start a form you need a ... tag',
+		enunciate: 'To start a form you need a ... tag',
 		answers: {
 			a: 'form',
 			b: 'div',
@@ -26,7 +26,7 @@ let questionsArr = [
 		},
 	},
 	{
-		question:
+		enunciate:
 			'While CSS gives a style, HTML an structure, JavaScript gives ...',
 		answers: {
 			a: 'Potential',
@@ -39,7 +39,7 @@ let questionsArr = [
 		},
 	},
 	{
-		question: 'How many data types exist on JavaScript',
+		enunciate: 'How many data types exist on JavaScript',
 		answers: {
 			a: '8',
 			b: '2',
@@ -51,7 +51,7 @@ let questionsArr = [
 		},
 	},
 	{
-		question: 'Which of these is not a primitive value',
+		enunciate: 'Which of these is not a primitive value',
 		answers: {
 			a: 'BigInt',
 			b: 'String',
@@ -63,32 +63,28 @@ let questionsArr = [
 		},
 	},
 ];
-//----------------------------
 
-// # Logical variables
-// ! Remember to change to 60
 let timeLeft = 60;
 
 // Variables of the index
-let lastQuestionIndex = questionsArr.length - 1;
+let lastQuestionIndex = quiz.length - 1;
 let runningQuestionIndex = 0;
 let choice;
-let nodeList;
+let choicesButtons;
 
-// # Elements
-// Start Screen
-const startScreenEl = document.querySelector('#start-screen');
+// # DOM Elements
+const startScreen = document.querySelector('#start-screen');
 
-// Questions
-const questionsContainerEl = document.querySelector('#questions');
-const questionTitleEl = document.querySelector('#question-title');
-const choicesEl = document.querySelector('#choices');
+const questionsContainer = document.querySelector('#questions');
+const questionTitle = document.querySelector('#question-title');
+const choices = document.querySelector('#choices');
 
-// Feedback
-const feedBackEl = document.querySelector('#feedback');
+const feedBack = document.querySelector('#feedback');
+
+// # Functions
 
 // function to create new elements
-const newEl = element => document.createElement(element);
+const newElement = element => document.createElement(element);
 
 // Function to make the questions visible
 function showScreen(toShow, toHide) {
@@ -106,48 +102,38 @@ function showScreen(toShow, toHide) {
 
 // Function to insert current question
 function renderQuestion() {
-	let question = questionsArr[runningQuestionIndex];
+	let question = quiz[runningQuestionIndex];
+	questionTitle.textContent = question.enunciate;
 
-	questionTitleEl.textContent = question.question;
-	// Array of values of answers
-	const answersValue = Object.values(
-		questionsArr[runningQuestionIndex].answers
-	);
+	const possibleAnswers = Object.values(quiz[runningQuestionIndex].answers);
 
-	// Iteration over each value
-	for (const value of answersValue) {
-		choice = newEl('button');
+	for (const answer of possibleAnswers) {
+		choice = newElement('button');
 
-		choice.textContent = value;
+		choice.textContent = answer;
 		choice.classList.add('choice-button');
-		choicesEl.appendChild(choice);
+		choices.appendChild(choice);
 	}
 
 	return checkChoice();
 }
 
-// Function to check choice
 function checkChoice() {
-	// nodeList of choice buttons
-	nodeList = document.querySelectorAll('.choice-button');
-	// Iteration over nodeList
-	for (let i = 0; i < nodeList.length; i++) {
-		const node = nodeList[i];
+	choicesButtons = document.querySelectorAll('.choice-button');
 
-		// Event listener to check if is correct
-		node.addEventListener('click', function (e) {
-			const myChoice = e.target.textContent;
+	for (let i = 0; i < choicesButtons.length; i++) {
+		const button = choicesButtons[i];
 
-			// Conditional to check choice, then show feedback and delete all elements to render next question (in case the choice is incorrect 10 seconds are to be taken from the time left)
-			if (
-				myChoice === questionsArr[runningQuestionIndex].correctAnswer()
-			) {
+		button.addEventListener('click', function (e) {
+			const userChoice = e.target.textContent;
+
+			if (userChoice === quiz[runningQuestionIndex].correctAnswer()) {
 				NewFeedBack('Correct!');
-				deleteChild(choicesEl, choicesEl.lastElementChild);
+				deleteChild(choices, choices.lastElementChild);
 			} else {
 				NewFeedBack('Wrong!');
 				timeLeft -= 10;
-				deleteChild(choicesEl, choicesEl.lastElementChild);
+				deleteChild(choices, choices.lastElementChild);
 			}
 
 			if (runningQuestionIndex < lastQuestionIndex) {
@@ -158,7 +144,6 @@ function checkChoice() {
 	}
 }
 
-// Function to delete child elements
 function deleteChild(parent, child) {
 	while (child) {
 		parent.removeChild(child);
@@ -166,15 +151,11 @@ function deleteChild(parent, child) {
 	}
 }
 
-// Function to show feedback
 function NewFeedBack(value) {
-	if (feedBackEl.classList.contains('hide')) {
-		feedBackEl.classList.toggle('hide');
-		feedBackEl.textContent = value;
+	if (feedBack.classList.contains('hide')) {
+		feedBack.classList.toggle('hide');
+		feedBack.textContent = value;
 	} else {
-		return (feedBackEl.textContent = value);
+		return (feedBack.textContent = value);
 	}
 }
-
-// console.log(questionsArr.length);
-// console.log(lastQuestionIndex);
