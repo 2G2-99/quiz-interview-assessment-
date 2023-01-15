@@ -3,11 +3,11 @@
 let startButton = document.querySelector('#start');
 
 let timer = document.querySelector('#time');
-timer.textContent = 60;
+timer.textContent = 90;
 
 let user = {
-	initials,
-	score,
+	initials: '',
+	score: 0,
 };
 
 startButton.addEventListener('click', runTimer);
@@ -33,25 +33,27 @@ const scoreForm = document.querySelector('#score-form');
 const initialsInput = document.querySelector('#initials');
 const submitScore = document.querySelector('#submit-score');
 
-function storeScore() {
-	localStorage.setItem('user', JSON.stringify(user));
+function storeScoreOf(user) {
+	const highScoresString = localStorage.getItem('highScoresList');
+	let highScores = JSON.parse(highScoresString) ?? [];
+	highScores.push(user);
+	highScores.sort((a, b) => b.score - a.score);
+	localStorage.setItem('highScoresList', JSON.stringify(highScores));
 }
 
 scoreForm.addEventListener('submit', event => {
 	event.preventDefault();
-
 	user.initials = initialsInput.value.trim();
 	user.score = finalScore.textContent;
-
-	if (initials === '') {
+	if (user.initials === '' || user['initials'].length === 0) {
+		alert('Please, enter your initials');
 		return;
+	} else {
+		storeScoreOf(user);
+		user.initials = '';
+		user.score = 0;
+		initialsInput.value = '';
 	}
-
-	storeScore();
-
-	user.initials = '';
-	user.score = '';
-	initialsInput.value = '';
 
 	window.location.href = './highscores.html';
 });
