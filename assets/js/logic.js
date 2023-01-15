@@ -17,17 +17,13 @@ function runTimer() {
 		timeLeft--;
 		timer.textContent = timeLeft;
 
-		if (timeLeft <= 0) {
+		if (timeLeft <= 0 || quizEnded) {
 			clearInterval(timeInterval);
 			timer.textContent = 0;
 			return showScreen(endScreen, questionsContainer);
-		} else if (runningQuestionIndex === lastQuestionIndex) {
-			clearInterval(timeInterval);
-			endQuiz();
 		}
 	}, 1000);
-
-	showScreen(questionsContainer, startScreen);
+	initQuiz();
 }
 
 // #End of quiz (End screen)
@@ -36,12 +32,6 @@ let finalScore = document.querySelector('#score');
 const scoreForm = document.querySelector('#score-form');
 const initialsInput = document.querySelector('#initials');
 const submitScore = document.querySelector('#submit-score');
-
-function endQuiz() {
-	showScreen(endScreen, questionsContainer);
-	console.log((finalScore.textContent = timeLeft));
-	return (finalScore.textContent = timeLeft);
-}
 
 function storeScore() {
 	localStorage.setItem('user', JSON.stringify(user));
