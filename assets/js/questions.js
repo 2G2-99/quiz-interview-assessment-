@@ -62,14 +62,80 @@ let quiz = [
 			return this.answers.d;
 		},
 	},
+	{
+		enunciate: 'Instead of an "if" statement you can use ...',
+		answers: {
+			a: 'switch and ternary operator',
+			b: 'for and while',
+			c: 'map and forEach',
+			d: 'All of them',
+		},
+		correctAnswer() {
+			return this.answers.a;
+		},
+	},
+	{
+		enunciate: 'Which of these is not an Object type',
+		answers: {
+			a: 'Object',
+			b: 'array',
+			c: 'null',
+			d: 'function',
+		},
+		correctAnswer() {
+			return this.answers.d;
+		},
+	},
+	{
+		enunciate: 'Functions declarations syntax is...',
+		answers: {
+			a: 'function name {parameter} (...)',
+			b: 'const name = function () {...}',
+			c: 'function name(parameter) {...}',
+			d: 'const name = (parameter) => ...',
+		},
+		correctAnswer() {
+			return this.answers.c;
+		},
+	},
+	{
+		enunciate: 'What happens after the "+=" Assignment Operator?',
+		answers: {
+			a: 'Copies the value of the variable',
+			b: 'Adds a value to the variable',
+			c: 'Concatenates two variables',
+			d: 'Adds a "+" to the value',
+		},
+		correctAnswer() {
+			return this.answers.b;
+		},
+	},
+	{
+		enunciate: 'The official name of JavaScript is...',
+		answers: {
+			a: 'Is not JavaScript?',
+			b: 'JS',
+			c: 'Java',
+			d: 'ECMAScript',
+		},
+		correctAnswer() {
+			return this.answers.d;
+		},
+	},
 ];
 
-let timeLeft = 60;
+let timeLeft = 90;
 
 let question;
 let lastQuestionIndex = quiz.length - 1;
 let runningQuestionIndex = 0;
 let choicesButtons;
+const correctSoundFeedback = document.querySelector(
+	"audio[data-sound-feedback='correct']"
+);
+const wrongSoundFeedback = document.querySelector(
+	"audio[data-sound-feedback='wrong']"
+);
 let quizEnded = false;
 
 // # DOM Elements
@@ -117,8 +183,10 @@ function renderButtonsOf(question) {
 function checkChosen(e) {
 	const answer = e.target.textContent;
 	if (answer === question.correctAnswer()) {
+		correctSoundFeedback.play();
 		NewFeedBack('Correct!');
 	} else {
+		wrongSoundFeedback.play();
 		NewFeedBack('Wrong!');
 		timeLeft -= 10;
 	}
