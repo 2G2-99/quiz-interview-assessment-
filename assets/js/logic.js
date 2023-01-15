@@ -63,5 +63,5 @@ scoreForm.addEventListener('submit', event => {
 	user.score = '';
 	initialsInput.value = '';
 
-	window.location.href = '../../highscores.html';
+	window.location.href = './highscores.html';
 });
