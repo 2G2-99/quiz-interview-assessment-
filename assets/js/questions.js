@@ -66,11 +66,11 @@ let quiz = [
 
 let timeLeft = 60;
 
-// Variables of the index
+let question;
 let lastQuestionIndex = quiz.length - 1;
 let runningQuestionIndex = 0;
-let choice;
 let choicesButtons;
+let quizEnded = false;
 
 // # DOM Elements
 const startScreen = document.querySelector('#start-screen');
@@ -83,12 +83,9 @@ const feedBack = document.querySelector('#feedback');
 
 // # Functions
 
-// function to create new elements
 const newElement = element => document.createElement(element);
 
-// Function to make the questions visible
 function showScreen(toShow, toHide) {
-	// Conditional to check if start-screen is hidden and question is not
 	if (
 		toShow.classList.contains('hide') &&
 		!toHide.classList.contains('hide')
@@ -96,51 +93,44 @@ function showScreen(toShow, toHide) {
 		toShow.classList.toggle('hide');
 		toHide.classList.toggle('hide');
 	}
-
-	return renderQuestion();
 }
 
-// Function to insert current question
-function renderQuestion() {
-	let question = quiz[runningQuestionIndex];
+function renderQuestion(runningQuestionIndex) {
+	question = quiz[runningQuestionIndex];
 	questionTitle.textContent = question.enunciate;
 
-	const possibleAnswers = Object.values(quiz[runningQuestionIndex].answers);
+	renderButtonsOf(question);
+}
+
+function renderButtonsOf(question) {
+	const possibleAnswers = Object.values(question.answers);
 
 	for (const answer of possibleAnswers) {
-		choice = newElement('button');
+		let choice = newElement('button');
 
 		choice.textContent = answer;
 		choice.classList.add('choice-button');
 		choices.appendChild(choice);
 	}
-
-	return checkChoice();
 }
 
-function checkChoice() {
-	choicesButtons = document.querySelectorAll('.choice-button');
+function checkChosen(e) {
+	const answer = e.target.textContent;
+	if (answer === question.correctAnswer()) {
+		NewFeedBack('Correct!');
+	} else {
+		NewFeedBack('Wrong!');
+		timeLeft -= 10;
+	}
+	getNext();
+}
 
-	for (let i = 0; i < choicesButtons.length; i++) {
-		const button = choicesButtons[i];
-
-		button.addEventListener('click', function (e) {
-			const userChoice = e.target.textContent;
-
-			if (userChoice === quiz[runningQuestionIndex].correctAnswer()) {
-				NewFeedBack('Correct!');
-				deleteChild(choices, choices.lastElementChild);
-			} else {
-				NewFeedBack('Wrong!');
-				timeLeft -= 10;
-				deleteChild(choices, choices.lastElementChild);
-			}
-
-			if (runningQuestionIndex < lastQuestionIndex) {
-				runningQuestionIndex++;
-				return renderQuestion();
-			}
-		});
+function NewFeedBack(message) {
+	if (feedBack.classList.contains('hide')) {
+		feedBack.classList.toggle('hide');
+		feedBack.textContent = message;
+	} else {
+		return (feedBack.textContent = message);
 	}
 }
 
@@ -151,11 +141,25 @@ function deleteChild(parent, child) {
 	}
 }
 
-function NewFeedBack(value) {
-	if (feedBack.classList.contains('hide')) {
-		feedBack.classList.toggle('hide');
-		feedBack.textContent = value;
-	} else {
-		return (feedBack.textContent = value);
+function getNext() {
+	deleteChild(choices, choices.lastElementChild);
+	if (runningQuestionIndex === lastQuestionIndex) {
+		endQuiz();
+	} else if (runningQuestionIndex !== lastQuestionIndex) {
+		runningQuestionIndex++;
+		renderQuestion(runningQuestionIndex);
 	}
 }
+
+function endQuiz() {
+	quizEnded = true;
+	showScreen(endScreen, questionsContainer);
+	return (finalScore.textContent = timeLeft);
+}
+
+function initQuiz() {
+	showScreen(questionsContainer, startScreen);
+	renderQuestion(runningQuestionIndex);
+}
+
+choices.addEventListener('click', checkChosen);
